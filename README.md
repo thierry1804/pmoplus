@@ -1,40 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# PMO+ (Project Management Office Plus)
 
-## Getting Started
+Application de gestion des affectations de développeurs aux projets.
 
-First, run the development server:
+## Fonctionnalités
 
+- Gestion des projets (commercial/interne)
+- Gestion des développeurs et leurs compétences
+- Affectation des développeurs aux projets
+- Vue des disponibilités
+- Diagramme de Gantt des affectations
+- Interface intuitive avec glisser-déposer
+
+## Prérequis
+
+- Node.js 18.x ou supérieur
+- NPM 9.x ou supérieur
+- Un projet Firebase
+
+## Installation
+
+1. Clonez le dépôt :
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <url-du-repo>
+cd pmoplus
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Installez les dépendances :
+```bash
+npm install
+```
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+3. Configurez Firebase :
+   - Créez un projet sur [Firebase Console](https://console.firebase.google.com)
+   - Créez une application Web dans votre projet Firebase
+   - Copiez les informations de configuration
+   - Créez un fichier `.env.local` à la racine du projet avec les variables suivantes :
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-auth-domain
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-storage-bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
+NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
+```
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+4. Démarrez l'application en mode développement :
+```bash
+npm run dev
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+L'application sera accessible à l'adresse [http://localhost:3000](http://localhost:3000)
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Structure de la base de données Firebase
 
-## Learn More
+### Collection `projects`
+- id (auto-généré)
+- name (string)
+- status (string: analysis, estimation, proposal, negotiation, won, lost, in_progress, completed, abandoned)
+- startDate (timestamp)
+- endDate (timestamp, optional)
+- description (string)
+- billable (boolean)
+- type (string: commercial/internal)
 
-To learn more about Next.js, take a look at the following resources:
+### Collection `developers`
+- id (auto-généré)
+- firstName (string)
+- lastName (string)
+- employeeId (string)
+- position (string)
+- technicalSkills (array of strings)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+### Collection `assignments`
+- id (auto-généré)
+- developerId (string, référence)
+- projectId (string, référence)
+- timeAllocation (number: 0-100)
+- startDate (timestamp)
+- endDate (timestamp, optional)
+- isIndefinite (boolean)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Utilisation
 
-## Deploy on Vercel
+1. **Gestion des projets**
+   - Créez et modifiez les projets
+   - Suivez leur statut et leur progression
+   - Gérez les informations de facturation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Gestion des développeurs**
+   - Ajoutez et modifiez les profils des développeurs
+   - Gérez leurs compétences techniques
+   - Suivez leur disponibilité
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+3. **Gestion des affectations**
+   - Affectez les développeurs aux projets
+   - Définissez le pourcentage de temps alloué
+   - Utilisez le glisser-déposer pour une gestion intuitive
+   - Visualisez les affectations dans un diagramme de Gantt
+
+## Contribution
+
+Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou une pull request.
+
+## Licence
+
+MIT
