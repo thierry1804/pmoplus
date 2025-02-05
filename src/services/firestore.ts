@@ -7,12 +7,20 @@ import {
   doc,
   query,
   limit,
-  orderBy
+  orderBy,
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import type { Project } from '../types';
 
 const COLLECTION_PROJECTS = 'projects';
+
+// Type pour les données Firestore
+type FirestoreProjectData = Omit<Project, 'id' | 'startDate' | 'endDate'> & {
+  startDate: string;
+  endDate?: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export const firestoreService = {
   async getProjects() {
@@ -34,14 +42,14 @@ export const firestoreService = {
 
       // Mapper les résultats
       const projects = snapshot.docs.map(doc => {
-        const data = doc.data();
+        const data = doc.data() as FirestoreProjectData;
         try {
           return {
             id: doc.id,
             name: data.name || '',
             status: data.status || 'analysis',
-            startDate: data.startDate ? new Date(data.startDate) : new Date(),
-            endDate: data.endDate ? new Date(data.endDate) : null,
+            startDate: new Date(data.startDate),
+            endDate: data.endDate ? new Date(data.endDate) : undefined,
             description: data.description || '',
             billable: Boolean(data.billable),
             type: data.type || 'commercial',
@@ -62,12 +70,16 @@ export const firestoreService = {
 
   async addProject(projectData: Omit<Project, 'id'>) {
     try {
-      const projectsRef = collection(db, COLLECTION_PROJECTS);
-      const docRef = await addDoc(projectsRef, {
+      const firestoreData: FirestoreProjectData = {
         ...projectData,
+        startDate: projectData.startDate.toISOString(),
+        endDate: projectData.endDate?.toISOString(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      });
+      };
+
+      const projectsRef = collection(db, COLLECTION_PROJECTS);
+      const docRef = await addDoc(projectsRef, firestoreData);
       console.log('Projet créé avec succès, ID:', docRef.id);
       return docRef.id;
     } catch (error) {
@@ -78,11 +90,15 @@ export const firestoreService = {
 
   async updateProject(projectId: string, projectData: Partial<Project>) {
     try {
-      const projectRef = doc(db, COLLECTION_PROJECTS, projectId);
-      await updateDoc(projectRef, {
+      const firestoreData: Partial<FirestoreProjectData> = {
         ...projectData,
+        startDate: projectData.startDate?.toISOString(),
+        endDate: projectData.endDate?.toISOString(),
         updatedAt: new Date().toISOString(),
-      });
+      };
+
+      const projectRef = doc(db, COLLECTION_PROJECTS, projectId);
+      await updateDoc(projectRef, firestoreData);
       console.log('Projet mis à jour avec succès');
     } catch (error) {
       console.error('Erreur lors de la mise à jour du projet:', error);

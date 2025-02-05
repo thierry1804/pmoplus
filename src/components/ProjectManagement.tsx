@@ -31,7 +31,7 @@ export default function ProjectManagement() {
     name: '',
     status: 'analysis' as ProjectStatus,
     startDate: new Date(),
-    endDate: null as Date | null,
+    endDate: undefined as Date | undefined,
     description: '',
     billable: false,
     type: 'commercial' as ProjectType,
@@ -58,7 +58,7 @@ export default function ProjectManagement() {
         name: project.name,
         status: project.status,
         startDate: project.startDate,
-        endDate: project.endDate || null,
+        endDate: project.endDate,
         description: project.description,
         billable: project.billable,
         type: project.type,
@@ -69,7 +69,7 @@ export default function ProjectManagement() {
         name: '',
         status: 'analysis',
         startDate: new Date(),
-        endDate: null,
+        endDate: undefined,
         description: '',
         billable: false,
         type: 'commercial',
@@ -93,8 +93,8 @@ export default function ProjectManagement() {
       const projectData = {
         name: formData.name.trim(),
         status: formData.status,
-        startDate: formData.startDate.toISOString(),
-        endDate: formData.endDate ? formData.endDate.toISOString() : null,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
         description: formData.description.trim(),
         billable: Boolean(formData.billable),
         type: formData.type,
@@ -203,7 +203,7 @@ export default function ProjectManagement() {
             <DatePicker
               label="Date de fin"
               value={formData.endDate}
-              onChange={(newValue) => setFormData({ ...formData, endDate: newValue })}
+              onChange={(newValue) => setFormData({ ...formData, endDate: newValue || undefined })}
               slotProps={{ textField: { fullWidth: true } }}
             />
 
